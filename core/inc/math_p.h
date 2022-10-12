@@ -483,11 +483,5 @@ void BR_PUBLIC_ENTRY BrMatrix23LPNormalise(br_matrix23 *A, br_matrix23 *B);
 #endif
 #endif
 
-/*
- * Extra compiler specific prototype info.
- */
-#ifndef _MATH_X_H_
-#include "math_x.h"
-#endif
 
 #endif

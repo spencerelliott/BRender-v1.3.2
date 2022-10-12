@@ -32,6 +32,10 @@ struct  br_geometry_lighting;
 struct  br_buffer_stored;
 struct  br_primitive_library;
 struct  br_primitive_state;
+struct  brp_block;
+struct  v1model_x;
+struct  v1model_f;
+struct  fmt_vertex;
 
 
 struct  br_object_dispatch;

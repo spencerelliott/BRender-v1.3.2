@@ -16,6 +16,11 @@ extern "C" {
 
 #ifndef _NO_PROTOTYPES
 
+struct br_device_pixelmap;
+struct br_renderer_facility;
+struct br_renderer;
+struct br_geometry;
+
 /*
  * Global setup
  */
@@ -271,6 +276,7 @@ br_error BR_RESIDENT_ENTRY BrRendererFacilityListFind(struct br_renderer_facilit
 				struct br_device_pixelmap *destination, br_token scalar_type);
 
 struct br_primitive_library;
+struct br_renderer_facility;
 
 br_error BR_RESIDENT_ENTRY BrPrimitiveLibraryFind(struct br_primitive_library **ppl,
 				struct br_device_pixelmap *destination, br_token scalar_type);

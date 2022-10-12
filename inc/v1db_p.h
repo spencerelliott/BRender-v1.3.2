@@ -59,6 +59,8 @@ typedef void BR_CALLBACK br_primitive_cbfn(
 extern "C" {
 #endif
 
+struct br_renderer;
+
 br_error BR_PUBLIC_ENTRY BrV1dbBeginWrapper(void);
 br_error BR_PUBLIC_ENTRY BrV1dbEndWrapper(void);
 

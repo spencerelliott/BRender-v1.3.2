@@ -261,7 +261,7 @@ typedef br_boolean BR_CALLBACK br_outfcty_enum_cbfn(char *identifier,
 br_error BR_PUBLIC_ENTRY BrDeviceEnum(br_device_enum_cbfn *cbfn, void *args);
 br_error BR_PUBLIC_ENTRY BrOutputFacilityEnum(char *name, br_outfcty_enum_cbfn *cbfn, void *args);
 
-struct br_renderer_facility;
+//struct br_renderer_facility;
 
 br_error BR_RESIDENT_ENTRY BrRendererFacilityFind(struct br_renderer_facility **prf,
 				struct br_device_pixelmap *destination, br_token scalar_type);

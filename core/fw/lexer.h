@@ -9,6 +9,9 @@
 #ifndef _LEXER_H_
 #define _LEXER_H_
 
+struct br_lexer_source;
+struct br_lexer;
+
 /*
  * Predefined tokens
  */
