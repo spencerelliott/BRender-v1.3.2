@@ -137,4 +137,8 @@ core_srcs = [
     'core/fmt/loadvue.c',
 ]
 
-library('core', sources: core_srcs, include_directories: brender_inc)
+driver_srcs = [
+
+]
+
+library('brender', sources: core_srcs + driver_srcs, include_directories: brender_inc)

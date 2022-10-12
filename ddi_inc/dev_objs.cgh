@@ -20,7 +20,7 @@ struct  br_facility;
 struct  br_output_facility;
 struct  br_device_pixelmap;
 struct  br_device_clut;
-//struct  br_renderer_facility;
+struct  br_renderer_facility;
 struct  br_renderer;
 struct  br_renderer_state_stored;
 struct  br_geometry;
