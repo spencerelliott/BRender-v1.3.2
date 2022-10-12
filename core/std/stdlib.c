@@ -18,19 +18,19 @@
 
 BR_RCS_ID("$Id: stdlib.c 1.1 1997/12/10 16:41:28 jon Exp $")
 
-int BR_RESIDENT_ENTRY BrMemCmp( const void *s1, const void *s2, size_t n )
+int BR_RESIDENT_ENTRY BrMemCmp( const void *s1, const void *s2, br_size_t n )
 {
 	return memcmp(s1,s2,n);
 }
 
 
-void * BR_RESIDENT_ENTRY BrMemCpy( void *s1, const void *s2, size_t n )
+void * BR_RESIDENT_ENTRY BrMemCpy( void *s1, const void *s2, br_size_t n )
 {
 	return memcpy(s1,s2,n);
 }
 
 
-void * BR_RESIDENT_ENTRY BrMemSet( void *s, int c, size_t n )
+void * BR_RESIDENT_ENTRY BrMemSet( void *s, int c, br_size_t n )
 {
 	return memset(s,c,n);
 }
@@ -67,19 +67,19 @@ br_size_t BR_RESIDENT_ENTRY BrStrLen( const char *s )
 }
 
 
-int BR_RESIDENT_ENTRY BrStrNCmp( const char *s1, const char *s2, size_t n )
+int BR_RESIDENT_ENTRY BrStrNCmp( const char *s1, const char *s2, br_size_t n )
 {
 	return strncmp(s1,s2,n);
 }
 
 
-int BR_RESIDENT_ENTRY BrStrNICmp( const char *s1, const char *s2, size_t n )
+int BR_RESIDENT_ENTRY BrStrNICmp( const char *s1, const char *s2, br_size_t n )
 {
 	return strnicmp(s1,s2,n);
 }
 
 
-char * BR_RESIDENT_ENTRY BrStrNCpy( char *s1, const char *s2, size_t n )
+char * BR_RESIDENT_ENTRY BrStrNCpy( char *s1, const char *s2, br_size_t n )
 {
 	return strncpy(s1,s2,n);
 }

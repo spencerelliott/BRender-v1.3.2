@@ -9,6 +9,8 @@
 #ifndef _COMPILER_H_
 #define _COMPILER_H_
 
+#define STATIC static
+
 /*
  * Fixed bitsize integers
  */

@@ -355,8 +355,8 @@ void BR_PUBLIC_ENTRY BrDevPaletteSetEntryOld(int i,br_colour colour)
 /*
  * Find a renderer from a destination pixelmap according to standard rules
  */
-br_error BR_RESIDENT_ENTRY BrRendererFacilityFind(br_renderer_facility **prf,
-				br_device_pixelmap *destination, br_token scalar_type)
+br_error BR_RESIDENT_ENTRY BrRendererFacilityFind(struct br_renderer_facility **prf,
+				struct br_device_pixelmap *destination, br_token scalar_type)
 {
 	br_renderer_facility *renderer_facility = NULL;
 	br_error r;

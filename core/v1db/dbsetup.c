@@ -226,7 +226,7 @@ static br_uint_32 BR_CALLBACK clearModel(br_model *item, void *arg)
 	return 0;
 }
 
-br_error BR_PUBLIC_ENTRY BrV1dbRendererBegin(br_device_pixelmap *destination, br_renderer *renderer)
+br_error BR_PUBLIC_ENTRY BrV1dbRendererBegin(struct br_device_pixelmap *destination, struct br_renderer *renderer)
 {
 	br_renderer_facility *renderer_facility = NULL;
 	br_error r;

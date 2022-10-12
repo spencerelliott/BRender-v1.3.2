@@ -279,9 +279,9 @@ br_error BR_RESIDENT_ENTRY BrPrimitiveLibraryListFind(struct br_primitive_librar
 				br_int_32 *num_pl, br_int_32 max_pl,
 				struct br_device_pixelmap *destination, br_token scalar_type);
 
-br_error BR_RESIDENT_ENTRY BrGeometryFormatFind(struct br_geometry **pgf,
-				struct br_renderer *renderer,
-				struct br_renderer_facility *renderer_facility,
+br_error BR_RESIDENT_ENTRY BrGeometryFormatFind(br_geometry **pgf,
+				br_renderer *renderer,
+				br_renderer_facility *renderer_facility,
 				br_token scalar_type,
 				br_token format_type);
 

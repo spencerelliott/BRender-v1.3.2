@@ -1,0 +1,138 @@
+project('brender', 'c',
+        default_options: ['default_library=static', 'warning_level=0'])
+
+brender_inc = include_directories(
+    'inc', 
+    'core/fw', 
+    'core/host', 
+    'core/math', 
+    'core/pixelmap', 
+    'core/std', 
+    'core/v1db'
+)
+
+# Compile the core library
+core_srcs = [
+    # core/fw
+    # 'core/fw/brbegin.c',
+    # 'core/fw/brbegin.c',
+    # 'core/fw/brbhook.c',
+    # 'core/fw/brlists.c',
+    # 'core/fw/brqsort.c',
+    # 'core/fw/bswap.c',
+    # 'core/fw/datafile.c',
+    # 'core/fw/devlist.c',
+    # 'core/fw/devsetup.c',
+    # 'core/fw/diag.c',
+    # 'core/fw/error.c',
+    # 'core/fw/file.c',
+    # 'core/fw/fwsetup.c',
+    # 'core/fw/genfile.c',
+    # 'core/fw/image.c',
+    # 'core/fw/lexer.c',
+    # 'core/fw/loader.c',
+    # 'core/fw/mem.c',
+    # 'core/fw/object.c',
+    # 'core/fw/objectc.c',
+    # 'core/fw/pattern.c',
+    # 'core/fw/pool.c',
+    # 'core/fw/printf.c',
+    # 'core/fw/register.c',
+    # 'core/fw/resource.c',
+    # 'core/fw/resreg.c',
+    # 'core/fw/scratch.c',
+    # 'core/fw/token.c',
+    # 'core/fw/tokenval.c',
+    # 'core/fw/assocarr.c',
+    # 'core/fw/sys_conf.c',
+    # 'core/fw/devquery.c',
+
+    # core/host sources
+    'core/host/himage.c',
+    'core/host/hook.c',
+    'core/host/hostcfg.c',
+    'core/host/hstsetup.c',
+    'core/host/memmgmt.c',
+    'core/host/ports.c',
+
+    # core/std sources
+    'core/std/stddiag.c',
+    'core/std/stdmem.c',
+    'core/std/stdfile.c',
+    'core/std/stdlib.c',
+    'core/std/math.c',
+    'core/std/logwrite.c',
+    'core/std/brexcept.c',
+
+    # core/pixelmap sources
+    'core/pixelmap/fontptrs.c',
+    'core/pixelmap/genclip.c',
+    'core/pixelmap/gencopy.c',
+    'core/pixelmap/pixelmap.c',
+    'core/pixelmap/pmdsptch.c',
+    'core/pixelmap/pmfile.c',
+    'core/pixelmap/pmgen.c',
+    'core/pixelmap/pmmem.c',
+    'core/pixelmap/pmnull.c',
+    'core/pixelmap/pmsetup.c',
+    'core/pixelmap/quantize.c',
+    'core/pixelmap/scale.c',
+    'core/pixelmap/mipsupt.c',
+
+    # core/dosio sources
+    'core/dosio/divtrap.c',
+    'core/dosio/dossetup.c',
+    'core/dosio/eventq.c',
+    'core/dosio/keyboard.c',
+    'core/dosio/readmse.c',
+
+    # core/v1db sources
+    # 'core/v1db/actsupt.c',
+    # 'core/v1db/custsupt.c',
+    # 'core/v1db/dbsetup.c',
+    # 'core/v1db/def_mat.c',
+    # 'core/v1db/def_mdl.c',
+    # 'core/v1db/def_otab.c',
+    # 'core/v1db/enables.c',
+    # 'core/v1db/ffhooks.c',
+    # 'core/v1db/matsupt.c',
+    # 'core/v1db/modrend.c',
+    # 'core/v1db/modsupt.c',
+    # 'core/v1db/otable.c',
+    # 'core/v1db/pick.c',
+    # 'core/v1db/prelight.c',
+    # 'core/v1db/prepmap.c',
+    # 'core/v1db/prepmatl.c',
+    # 'core/v1db/prepmesh.c',
+    # 'core/v1db/preptab.c',
+    # 'core/v1db/regsupt.c',
+    # 'core/v1db/render.c',
+    # 'core/v1db/v1dbfile.c',
+    # 'core/v1db/dbquery.c',
+
+    # core/math sources
+    'core/math/angles.c',
+    'core/math/fixed.c',
+    'core/math/matrix23.c',
+    'core/math/matrix34.c',
+    'core/math/matrix4.c',
+    'core/math/plane.c',
+    'core/math/quat.c',
+    'core/math/scalar.c',
+    'core/math/transfrm.c',
+    'core/math/vector.c',
+
+    # core/fmt sources
+    'core/fmt/load3ds.c',
+    'core/fmt/loadasc.c',
+    'core/fmt/loadbmp.c',
+    'core/fmt/loadgif.c',
+    'core/fmt/loadiff.c',
+    'core/fmt/loadnff.c',
+    'core/fmt/loadscr.c',
+    'core/fmt/loadtga.c',
+    'core/fmt/savescr.c',
+    'core/fmt/loadvue.c',
+]
+
+library('core', sources: core_srcs, include_directories: brender_inc)
