@@ -173,6 +173,10 @@ static void GEOMETRY_CALL V1Face_CullOneSidedPerspective(struct br_geometry *sel
 }
 #endif
 
+#ifndef V1Face_CullOneSidedPerspective_P6
+#define V1Face_CullOneSidedPerspective_P6 V1Face_CullOneSidedPerspective
+#endif
+
 #ifndef V1Face_OS_CullOneSidedPerspective
 #define V1Face_OS_CullOneSidedPerspective V1Face_CullOneSidedPerspective
 #endif

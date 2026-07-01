@@ -5,6 +5,7 @@ option(BRENDER_FLOAT "Use 32-bit floating point scalars" ON)
 option(BRENDER_USE_ASM "Build legacy x86 assembly paths" OFF)
 option(BRENDER_BUILD_TESTS "Build smoke tests" ON)
 option(BRENDER_BUILD_SOFTREND "Build software renderer driver (C-only geometry)" ON)
+option(BRENDER_BUILD_PENTPRIM "Build software primitives driver (C rasterizers)" ON)
 
 if(NOT BRENDER_FLOAT)
     message(FATAL_ERROR "Only BASED_FLOAT builds are supported by the CMake port (Phase 0).")
@@ -18,6 +19,10 @@ add_subdirectory(core)
 
 if(BRENDER_BUILD_SOFTREND)
     add_subdirectory(drivers/softrend)
+endif()
+
+if(BRENDER_BUILD_PENTPRIM)
+    add_subdirectory(drivers/pentprim)
 endif()
 
 if(BRENDER_BUILD_TESTS)
