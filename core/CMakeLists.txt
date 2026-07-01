@@ -88,6 +88,7 @@ target_include_directories(brpm PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/pixelmap")
 add_library(brmt STATIC
     math/angles.c
     math/fixed.c
+    math/fixed_div_c.c
     math/matrix23.c
     math/matrix34.c
     math/matrix4.c

@@ -455,7 +455,7 @@ static br_error BR_CMETHOD_DECL(br_primitive_state_soft, partQuery)(
 	if(tp == NULL)
 		return BRE_FAIL;
 
-	return BrTokenValueQuery(pvalue, NULL, NULL, t,  self, tp);
+	return BrTokenValueQuery(pvalue, NULL, 0, t,  self, tp);
 }
 
 static br_error BR_CMETHOD_DECL(br_primitive_state_soft, partQueryBuffer)(

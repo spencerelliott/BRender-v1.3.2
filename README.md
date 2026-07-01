@@ -10,8 +10,9 @@ A portable **C-only** build path is being added alongside the original DMAKE pro
 
 - Core libraries (`brfw`, `brhost`, `brst`, `brpm`, `brmt`, `brdb`, `brfm`) build with CMake 3.20+.
 - The **software renderer** driver (`softrend`) builds with C geometry helpers; legacy x86 ASM is off by default.
-- A smoke test (`br_begin_test`) verifies `BrBegin()` / `BrEnd()` initialization.
-- **Not yet available:** POSIX display output, `pentprim` C rasterizers, and fixed-point CMake builds.
+- The **software primitives** driver (`pentprim`) builds with a small set of C triangle rasterizers; remaining ASM entry points are stubbed.
+- Tests: `br_begin_test` (init), `br_softrend_test` (driver registration), `br_pentprim_rast_test` (offscreen rasterizer).
+- **Not yet available:** POSIX display output, full `pentprim` rasterizer port, and fixed-point CMake builds.
 
 ```bash
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
