@@ -263,25 +263,25 @@ br_error BR_PUBLIC_ENTRY BrOutputFacilityEnum(char *name, br_outfcty_enum_cbfn *
 
 struct br_renderer_facility;
 
-br_error BR_RESIDENT_ENTRY BrRendererFacilityFind(br_renderer_facility **prf,
+br_error BR_RESIDENT_ENTRY BrRendererFacilityFind(struct br_renderer_facility **prf,
 				struct br_device_pixelmap *destination, br_token scalar_type);
 
-br_error BR_RESIDENT_ENTRY BrRendererFacilityListFind(br_renderer_facility **prf,
+br_error BR_RESIDENT_ENTRY BrRendererFacilityListFind(struct br_renderer_facility **prf,
 				br_int_32 *num_rf, br_int_32 max_rf,
 				struct br_device_pixelmap *destination, br_token scalar_type);
 
 struct br_primitive_library;
 
-br_error BR_RESIDENT_ENTRY BrPrimitiveLibraryFind(br_primitive_library **ppl,
+br_error BR_RESIDENT_ENTRY BrPrimitiveLibraryFind(struct br_primitive_library **ppl,
 				struct br_device_pixelmap *destination, br_token scalar_type);
 
-br_error BR_RESIDENT_ENTRY BrPrimitiveLibraryListFind(br_primitive_library **ppl,
+br_error BR_RESIDENT_ENTRY BrPrimitiveLibraryListFind(struct br_primitive_library **ppl,
 				br_int_32 *num_pl, br_int_32 max_pl,
 				struct br_device_pixelmap *destination, br_token scalar_type);
 
-br_error BR_RESIDENT_ENTRY BrGeometryFormatFind(br_geometry **pgf,
-				br_renderer *renderer,
-				br_renderer_facility *renderer_facility,
+br_error BR_RESIDENT_ENTRY BrGeometryFormatFind(struct br_geometry **pgf,
+				struct br_renderer *renderer,
+				struct br_renderer_facility *renderer_facility,
 				br_token scalar_type,
 				br_token format_type);
 

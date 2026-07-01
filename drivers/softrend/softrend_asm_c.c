@@ -3,6 +3,7 @@
  */
 #include "drv.h"
 #include "rend.h"
+#include "shortcut.h"
 
 br_boolean BR_ASM_CALL subdivideCheck(brp_vertex *v0, brp_vertex *v1, brp_vertex *v2)
 {

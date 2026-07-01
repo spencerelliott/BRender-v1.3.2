@@ -4,7 +4,7 @@ project(BRender VERSION 1.3.2 LANGUAGES C)
 option(BRENDER_FLOAT "Use 32-bit floating point scalars" ON)
 option(BRENDER_USE_ASM "Build legacy x86 assembly paths" OFF)
 option(BRENDER_BUILD_TESTS "Build smoke tests" ON)
-option(BRENDER_BUILD_SOFTREND "Build software renderer driver (C-only geometry)" OFF)
+option(BRENDER_BUILD_SOFTREND "Build software renderer driver (C-only geometry)" ON)
 
 if(NOT BRENDER_FLOAT)
     message(FATAL_ERROR "Only BASED_FLOAT builds are supported by the CMake port (Phase 0).")
