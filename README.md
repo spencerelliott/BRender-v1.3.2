@@ -4,6 +4,8 @@ This is the source code to version 1.3.2 of the BRender engine by Argonaut Softw
 
 See **[BUILDING.md](BUILDING.md)** for CMake build instructions on modern Linux/macOS/POSIX systems.
 
+See **[PORTING_PLAN.md](PORTING_PLAN.md)** for the CMake port roadmap, completed work, and agent handoff notes.
+
 ## CMake port (work in progress)
 
 A portable **C-only** build path is being added alongside the original DMAKE project files:
