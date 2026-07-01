@@ -3,6 +3,18 @@ set(BRENDER_PUBLIC_INCLUDES
     "${BRENDER_SOURCE_DIR}/ddi_inc"
 )
 
+# Core static libraries have circular references (notably brfw <-> brdb).
+# LINK_GROUP RESCAN resolves these on GNU ld; macOS ld requires repeating libs.
+if(CMAKE_LINK_GROUP_USING_RESCAN_SUPPORTED)
+    set(BRENDER_CORE_LINK_LIBS
+        "$<LINK_GROUP:RESCAN,brfw,brhost,brst,brpm,brmt,brdb,brfm>"
+    )
+else()
+    set(BRENDER_CORE_LINK_LIBS
+        brfm brdb brfw brmt brpm brst brhost brfw brdb
+    )
+endif()
+
 function(brender_apply_common_target_settings target)
     target_include_directories(${target}
         PUBLIC
@@ -22,7 +34,9 @@ function(brender_apply_common_target_settings target)
             __BR_POSIX__=1
             BRENDER_USE_ASM=$<BOOL:${BRENDER_USE_ASM}>
     )
-    if(UNIX)
+    # compiler.h uses the __GNUC__ code path; Clang/GCC already define this macro.
+    # Forcing __GNUC__=1 on Apple Clang breaks system va_list typedefs.
+    if(UNIX AND NOT APPLE)
         target_compile_definitions(${target} PRIVATE __GNUC__=1)
     endif()
     target_compile_options(${target} PRIVATE

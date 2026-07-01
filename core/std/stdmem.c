@@ -9,7 +9,9 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <stdio.h>
+#if defined(__linux__) || defined(__GLIBC__)
 #include <malloc.h>
+#endif
 
 #include "brender.h"
 

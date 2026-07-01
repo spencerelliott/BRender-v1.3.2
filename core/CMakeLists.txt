@@ -142,7 +142,5 @@ add_library(brfm STATIC
 brender_apply_common_target_settings(brfm)
 
 add_library(brender_core INTERFACE)
-target_link_libraries(brender_core INTERFACE
-    "$<LINK_GROUP:RESCAN,brfw,brhost,brst,brpm,brmt,brdb,brfm>"
-)
+target_link_libraries(brender_core INTERFACE ${BRENDER_CORE_LINK_LIBS})
 target_include_directories(brender_core INTERFACE ${BRENDER_PUBLIC_INCLUDES})

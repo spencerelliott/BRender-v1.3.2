@@ -502,6 +502,9 @@ void BR_PUBLIC_ENTRY BrZsEnd(void)
 #undef BrBegin
 #undef BrEnd
 
+br_error BR_PUBLIC_ENTRY BrBegin(void);
+br_error BR_PUBLIC_ENTRY BrEnd(void);
+
 br_error BR_PUBLIC_ENTRY BrV1dbBeginWrapper(void)
 {
 	br_error error;

@@ -25,7 +25,11 @@ typedef struct br_token_entry {
 /*
  * Predefined entries
  */
+#if defined(__APPLE__) && defined(__LP64__)
+static br_token_entry predefinedTokens[] __attribute__((aligned(8))) = {
+#else
 static br_token_entry predefinedTokens[] = {
+#endif
 #include "pretok.c"
 };
 

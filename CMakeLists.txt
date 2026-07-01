@@ -15,6 +15,11 @@ set(BRENDER_SOURCE_DIR "${CMAKE_SOURCE_DIR}" CACHE PATH "BRender source root")
 
 include(cmake/BRenderOptions.cmake)
 
+if(APPLE)
+    # Modern macOS ld rejects misaligned pointers in pack(4) static data tables.
+    add_link_options(LINKER:-ld_classic)
+endif()
+
 add_subdirectory(core)
 
 if(BRENDER_BUILD_SOFTREND)
