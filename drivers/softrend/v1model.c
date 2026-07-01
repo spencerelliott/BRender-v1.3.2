@@ -920,12 +920,6 @@ static br_error V1Model_Render
 		scache.colour = renderer->state.surface.colour & 0xFFFFFF;
 		scache.colour |= BrScalarToInt(BR_CONST_MUL(renderer->state.surface.opacity,256)) << 24;
 
-		/*
-		 * Make sure base primitive block is hooked up to the right place
-		 */
-		renderer->state.cache.face_blocks[0].chain = rend.block;
-		renderer->state.cache.face_blocks_onscreen[0].chain = rend.block;
-
 		if(rend.block_changed || rend.range_changed || !renderer->state.cache.valid) {
 
 			CacheUpdate(renderer);
@@ -936,6 +930,12 @@ static br_error V1Model_Render
 			renderer->state.cache.valid = BR_TRUE;
 			renderer->state.timestamp_cache = Timestamp();
 		}
+
+		/*
+		 * Attach the matched rasteriser block after face chains are built
+		 */
+		renderer->state.cache.face_blocks[0].chain = rend.block;
+		renderer->state.cache.face_blocks_onscreen[0].chain = rend.block;
 
 #if BASED_FIXED
 		if(on_screen) {

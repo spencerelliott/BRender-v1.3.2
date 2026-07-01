@@ -75,6 +75,8 @@ struct br_primitive_state * PrimitiveStateSoftAllocate(struct br_primitive_libra
 	 * Setup initial state
 	 */
 	self->out.colour.viewport_changed = BR_TRUE;
+	self->prim.custom_block = NULL;
+	self->cache.last_block = NULL;
 
 	ObjectContainerAddFront(plib,(br_object *)self);
 
@@ -599,6 +601,7 @@ static br_error BR_CMETHOD_DECL(br_primitive_state_soft, stateDefault)(
 		self->prim.bump.buffer = NULL;
         self->prim.index_fog.buffer = NULL;
 		self->prim.colour_type = BRT_DEFAULT;
+		self->prim.custom_block = NULL;
 
 		self->prim.timestamp = Timestamp();
 		self->prim.timestamp_major = Timestamp();
@@ -635,6 +638,13 @@ static br_error BR_CMETHOD_DECL(br_primitive_state_soft, stateCopy)(
 		(self->cache.timestamp_out != source->cache.timestamp_out) ||
 		(self->cache.last_type != source->cache.last_type)))
 		self->cache = source->cache;
+
+	/*
+	 * Custom primitive blocks are a runtime debugging aid only and must
+	 * not persist in saved/restored state.
+	 */
+	if(mask & MASK_STATE_PRIMITIVE)
+		self->prim.custom_block = NULL;
 
 	return BRE_OK;
 }

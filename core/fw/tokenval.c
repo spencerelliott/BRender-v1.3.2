@@ -12,6 +12,12 @@
 BR_RCS_ID("$Id: tokenval.c 1.3 1998/05/20 15:25:02 jon Exp $")
 
 /*
+ * Vector/matrix COPY conversions move arrays of 4-byte scalars. Do not
+ * use sizeof(br_uint_32) for these; on LP64 Unix unsigned long is 8 bytes.
+ */
+#define BRTV_COPY_ELEM_SIZE 4
+
+/*
  * Allocate a new template structure
  */
 br_tv_template * BR_RESIDENT_ENTRY BrTVTemplateAllocate(void *res, br_tv_template_entry *entries, int n_entries)
@@ -204,28 +210,32 @@ static br_float * ConvertFixedToFloat(br_float **pextra, br_fixed_ls *src, br_in
  * Returns pointer to start of destination block, or NULL if there was not
  * enough space
  */
-static br_uint_32 * ConvertLongCopy(br_uint_32 **pextra, br_uint_32 *src, br_int_32 count, br_size_t *pextra_space)
+static void * ConvertBlockCopy(void **pextra, void *src, br_int_32 count, br_size_t elem_size, br_size_t *pextra_space)
 {
-	br_uint_32 *ret;
+	void *ret;
+	br_size_t bytes;
 
 	if(pextra == NULL || *pextra == NULL || pextra_space == NULL)
 		return NULL;
 
+	bytes = (br_size_t)count * elem_size;
 	ret = *pextra;
 
-	/*
-	 * Check there is space for the data
-	 */
-	if((count * sizeof(**pextra)) > *pextra_space)
+	if(bytes > *pextra_space)
 		return NULL;
 
-	*pextra_space -= count * sizeof(**pextra);
+	*pextra_space -= bytes;
+	BrMemCpy(*pextra, src, bytes);
+	*pextra = (char *)(*pextra) + bytes;
 
-	while(count--)
-		*(*pextra)++ = *src++;
-		
 	return ret;
 }
+
+#define ConvertLongCopy(pextra, src, count, pextra_space) \
+	ConvertBlockCopy(pextra, src, count, sizeof(br_uint_32), pextra_space)
+
+#define ConvertScalarCopy(pextra, src, count, pextra_space) \
+	ConvertBlockCopy(pextra, src, count, BRTV_COPY_ELEM_SIZE, pextra_space)
 
 /*
  * Fetch one value according to template information
@@ -360,32 +370,32 @@ static br_error ValueQuery(
 		break;
 
 	case BRTV_CONV_V2_COPY:
-		if((tv->v.p = ConvertLongCopy((br_uint_32 **)pextra, MEM_P(br_uint_32), 2, pextra_size)) == NULL)
+		if((tv->v.p = ConvertScalarCopy(pextra, mem, 2, pextra_size)) == NULL)
 			return BRE_OVERFLOW;
 		break;
 
 	case BRTV_CONV_V3_COPY:
-		if((tv->v.p = ConvertLongCopy((br_uint_32 **)pextra, MEM_P(br_uint_32), 3, pextra_size)) == NULL)
+		if((tv->v.p = ConvertScalarCopy(pextra, mem, 3, pextra_size)) == NULL)
 			return BRE_OVERFLOW;
 		break;
 
 	case BRTV_CONV_V4_COPY:
-		if((tv->v.p = ConvertLongCopy((br_uint_32 **)pextra, MEM_P(br_uint_32), 4, pextra_size)) == NULL)
+		if((tv->v.p = ConvertScalarCopy(pextra, mem, 4, pextra_size)) == NULL)
 			return BRE_OVERFLOW;
 		break;
 
 	case BRTV_CONV_M23_COPY:
-		if((tv->v.p = ConvertLongCopy((br_uint_32 **)pextra, MEM_P(br_uint_32), 6, pextra_size)) == NULL)
+		if((tv->v.p = ConvertScalarCopy(pextra, mem, 6, pextra_size)) == NULL)
 			return BRE_OVERFLOW;
 		break;
 
 	case BRTV_CONV_M4_COPY:
-		if((tv->v.p = ConvertLongCopy((br_uint_32 **)pextra, MEM_P(br_uint_32), 16, pextra_size)) == NULL)
+		if((tv->v.p = ConvertScalarCopy(pextra, mem, 16, pextra_size)) == NULL)
 			return BRE_OVERFLOW;
 		break;
 
 	case BRTV_CONV_M34_COPY:
-		if((tv->v.p = ConvertLongCopy((br_uint_32 **)pextra, MEM_P(br_uint_32), 12, pextra_size)) == NULL)
+		if((tv->v.p = ConvertScalarCopy(pextra, mem, 12, pextra_size)) == NULL)
 			return BRE_OVERFLOW;
 		break;
 
@@ -397,7 +407,7 @@ static br_error ValueQuery(
 		t = BrStrLen(MEM(char *))+1;
 		t = (t+(sizeof(br_uint_32)-1))/sizeof(br_uint_32);
 		
-		if((tv->v.p = ConvertLongCopy((br_uint_32 **)pextra, MEM(br_uint_32 *), t, pextra_size)) == NULL)
+		if((tv->v.p = ConvertLongCopy(pextra, MEM(br_uint_32 *), t, pextra_size)) == NULL)
 			return BRE_OVERFLOW;
 
 		break;
@@ -413,13 +423,13 @@ static br_error ValueQuery(
 			while(*lp++)
 				t++;
 
-			if((tv->v.p = ConvertLongCopy((br_uint_32 **)pextra, MEM(br_uint_32 *), t+1, pextra_size)) == NULL)
+			if((tv->v.p = ConvertLongCopy(pextra, MEM(br_uint_32 *), t+1, pextra_size)) == NULL)
 				return BRE_OVERFLOW;
 		} else {
 			/*
 			 * Make a list with 0 entries
 			 */
-			if((tv->v.p = ConvertLongCopy((br_uint_32 **)pextra, (br_uint_32 *)&lp, 1, pextra_size)) == NULL)
+			if((tv->v.p = ConvertLongCopy(pextra, (br_uint_32 *)&lp, 1, pextra_size)) == NULL)
 				return BRE_OVERFLOW;
 		}
 		break;
@@ -596,8 +606,7 @@ static br_error ValueSet(
 	case BRTV_CONV_M34_COPY:
 		t = 12;
 	copy_words:
-		for(i = 0; i < t; i++)
-			MEM_P(br_uint_32)[i] = ((br_uint_32 *)(tv->v.p))[i];
+		BrMemCpy(mem, tv->v.p, (size_t)t * BRTV_COPY_ELEM_SIZE);
 		break;
 
 	case BRTV_CONV_STRING:
@@ -653,32 +662,32 @@ static br_size_t ValueExtraSize(void *block, br_tv_template_entry *tep)
 	case BRTV_CONV_V2_FIXED_FLOAT:
 	case BRTV_CONV_V2_FLOAT_FIXED:
 	case BRTV_CONV_V2_COPY:
-	  	return 2 * sizeof(br_uint_32);
+	  	return 2 * BRTV_COPY_ELEM_SIZE;
 
 	case BRTV_CONV_V3_FIXED_FLOAT:
 	case BRTV_CONV_V3_FLOAT_FIXED:
 	case BRTV_CONV_V3_COPY:
-	  	return 3 * sizeof(br_uint_32);
+	  	return 3 * BRTV_COPY_ELEM_SIZE;
 
 	case BRTV_CONV_V4_FIXED_FLOAT:
 	case BRTV_CONV_V4_FLOAT_FIXED:
 	case BRTV_CONV_V4_COPY:
-	  	return 4 * sizeof(br_uint_32);
+	  	return 4 * BRTV_COPY_ELEM_SIZE;
 
 	case BRTV_CONV_M23_FIXED_FLOAT:
 	case BRTV_CONV_M23_FLOAT_FIXED:
 	case BRTV_CONV_M23_COPY:
-	  	return 6 * sizeof(br_uint_32);
+	  	return 6 * BRTV_COPY_ELEM_SIZE;
 
 	case BRTV_CONV_M4_FIXED_FLOAT:
 	case BRTV_CONV_M4_FLOAT_FIXED:
 	case BRTV_CONV_M4_COPY:
-	  	return 16 * sizeof(br_uint_32);
+	  	return 16 * BRTV_COPY_ELEM_SIZE;
 
 	case BRTV_CONV_M34_FIXED_FLOAT:
 	case BRTV_CONV_M34_FLOAT_FIXED:
 	case BRTV_CONV_M34_COPY:
-	  	return 12 * sizeof(br_uint_32);
+	  	return 12 * BRTV_COPY_ELEM_SIZE;
 
 	case BRTV_CONV_STRING:
 		/*
@@ -980,7 +989,7 @@ br_error BR_RESIDENT_ENTRY BrTokenValueSet(
 	br_token_value tv;
 
 	tv.t = t;
-	tv.v.u32 = value;
+	tv.v.p = (void *)(uintptr_t)value;
 
 	/*
 	 * Make sure map info is built

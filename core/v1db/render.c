@@ -15,6 +15,32 @@
 
 BR_RCS_ID("$Id: render.c 1.9 1998/11/12 13:16:45 johng Exp $")
 
+static void setViewToScreenMatrix(br_matrix4 *vtos, br_token type)
+{
+	br_token_value tv[3];
+	br_int_32 count = 0;
+
+	tv[0].t = BRT_AS_MATRIX4_SCALAR(VIEW_TO_SCREEN);
+	tv[0].v.p = vtos;
+	tv[1].t = BRT_VIEW_TO_SCREEN_HINT_T;
+	tv[1].v.t = type;
+	tv[2].t = BR_NULL_TOKEN;
+
+	RendererPartSetMany(v1db.renderer, BRT_MATRIX, 0, tv, &count);
+}
+
+static void setModelToViewMatrix(br_matrix34 *m2v)
+{
+	br_token_value tv[2];
+	br_int_32 count = 0;
+
+	tv[0].t = BRT_AS_MATRIX34_SCALAR(MODEL_TO_VIEW);
+	tv[0].v.p = m2v;
+	tv[1].t = BR_NULL_TOKEN;
+
+	RendererPartSetMany(v1db.renderer, BRT_MATRIX, 0, tv, &count);
+}
+
 static void actorRenderOnScreen(br_actor *ap,
 								br_model *model,
 								br_material *material,
@@ -660,8 +686,7 @@ void BR_PUBLIC_ENTRY BrDbSceneRenderBegin(br_actor *world,
 	 * Work out View Transform from info. in camera actor
 	 */
 	vtos_type = CameraToScreenMatrix4(&vtos, camera);
-	RendererPartSet(v1db.renderer, BRT_MATRIX, 0, BRT_AS_MATRIX4_SCALAR(VIEW_TO_SCREEN), (br_uint_32)&vtos);
-	RendererPartSet(v1db.renderer, BRT_MATRIX, 0, BRT_VIEW_TO_SCREEN_HINT_T, (br_uint_32)vtos_type);
+	setViewToScreenMatrix(&vtos, vtos_type);
 
 	RendererPartSet(v1db.renderer, BRT_MATRIX, 0, BRT_AS_SCALAR(HITHER_Z), *(br_uint_32 *)&((br_camera *)camera->type_data)->hither_z);
 	RendererPartSet(v1db.renderer, BRT_MATRIX, 0, BRT_AS_SCALAR(YON_Z), *(br_uint_32 *)&((br_camera *)camera->type_data)->yon_z);
@@ -697,8 +722,7 @@ void BR_PUBLIC_ENTRY BrDbSceneRenderBegin(br_actor *world,
 	/*
 	 * Make world->view as initial model->view
 	 */
-	RendererPartSet(v1db.renderer, BRT_MATRIX, 0,
-		BRT_AS_MATRIX34_SCALAR(MODEL_TO_VIEW), (br_uint_32)&v1db.camera_path[i].m);
+	setModelToViewMatrix(&v1db.camera_path[i].m);
 
 	v1db.ttype = v1db.camera_path[i].transform_type;
 
@@ -717,6 +741,13 @@ void BR_PUBLIC_ENTRY BrDbSceneRenderBegin(br_actor *world,
 	BrSetupClipPlanes(world, &tfm, v1db.ttype, &vtos);
 	BrSetupEnvironment(world, &tfm, v1db.ttype);
 	BrSetupHorizons(world, &tfm, v1db.ttype);
+
+	/*
+	 * Re-apply the camera projection. Some setup paths touch matrix state
+	 * and the float bounds-test cache expects a stable view_to_screen here.
+	 */
+	vtos_type = CameraToScreenMatrix4(&vtos, camera);
+	setViewToScreenMatrix(&vtos, vtos_type);
 }
 
 /*

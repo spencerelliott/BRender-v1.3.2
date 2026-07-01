@@ -20,12 +20,14 @@ cmake --build build -j"$(nproc)"
 ctest --test-dir build --output-on-failure
 ```
 
-**Expected today:** all 3 tests pass.
+**Expected today:** 4 tests pass; `br_softrend_render_test` is disabled (WIP, exit 6).
 
 | Test | Links | What it proves |
 |------|-------|----------------|
 | `br_begin_test` | `brender_core` | `BrBegin()` / `BrEnd()` |
 | `br_softrend_test` | `brender_core softrend pentprim` | `SOFTPRMF` + `SOFTRNDF` devices register; float primitive library + renderer facility found |
+| `br_softrend_geometry_test` | `brender_core softrend pentprim` | Model prep after `BrModelAdd`; `prepared != NULL`, `nfaces == 1` |
+| `br_softrend_render_test` | `brender_core softrend pentprim` | **WIP** — end-to-end Z-buffer triangle render; currently `pixels=0` (disabled in CTest) |
 | `br_pentprim_rast_test` | `pentprim` | `TriangleRender_Z_I8_D16` writes pixels to a 64×64 buffer (~556 pixels) |
 
 Manual spot-check:
@@ -69,6 +71,10 @@ Manual spot-check:
 2. **64-bit segfault in resource allocator** — GCC/Clang need `#pragma pack(4)` in `inc/compiler.h` and `core/inc/compiler.h` so struct layout matches original 32-bit builds. Without this, `UserToRes()` and pointer-walking code break on 64-bit.
 3. **`fw_p.h` struct tags** — Driver-private includes hide some typedefs. Prototypes in `inc/fw_p.h` and `core/inc/fw_p.h` use explicit `struct br_renderer_facility *` etc.
 4. **Compile flags** — `cmake/BRenderOptions.cmake` sets `BASED_FLOAT=1`, `__BR_POSIX__=1`, `BRENDER_USE_ASM=OFF` by default.
+5. **LP64 token/matrix copy** — `core/fw/tokenval.c` uses 4-byte element size for vector/matrix `BRTV_CONV_*_COPY` paths. On macOS/Linux LP64, `unsigned long` is 8 bytes; the old code copied `16 × sizeof(br_uint_32)` bytes for a 4×4 matrix, corrupting renderer matrix state and adjacent fields.
+6. **Primitive state `custom_block`** — `drivers/pentprim/pstate.c` clears `prim.custom_block = NULL` on allocate/default/copy; uninitialized pointer caused segfault in `match.c`.
+7. **Renderer state timestamps** — `drivers/softrend/state.c` `StateInitialise()` bumps matrix/cull/surface/enable timestamps so `StateCopy()` propagates defaults into zeroed renderer state.
+8. **Face/rasteriser chain hookup** — `drivers/softrend/v1model.c` attaches `rend.block` to `face_blocks*_onscreen[0].chain` *after* `V1Faces_GeometryFnsUpdate()` rebuilds the face-op chain (fixes segfault when rendering).
 
 ---
 
@@ -99,9 +105,13 @@ CMake renames driver entry points per target:
 
 ### Phase 1 remaining
 
-- [ ] End-to-end render test: create renderer + offscreen pixelmap, draw a triangle, read back pixels
-- [ ] Exercise softrend geometry path beyond driver registration (model prep, bucket sort, etc.)
-- [ ] Audit remaining softrend ASM references when `BRENDER_USE_ASM=OFF` (e.g. `v1m_386.asm`, `gen_386.asm`, `subdiv.asm`) — currently using C fallbacks or stubs
+- [x] `br_softrend_geometry_test` — model prep via `BrModelAdd`, verifies `prepared` and face count
+- [ ] End-to-end render test: create renderer + offscreen pixelmap, draw a triangle, read back pixels (`br_softrend_render_test` — matrix/segfault fixed; raster output still zero)
+- [x] Exercise softrend geometry path beyond driver registration (model prep via `br_softrend_geometry_test`)
+- [x] Audit remaining softrend ASM references when `BRENDER_USE_ASM=OFF`:
+  - `drivers/softrend/drv_ip.h` includes `v1m_386.h` / `gen_386.h` only when `__386__ && BRENDER_USE_ASM`
+  - C fallbacks: `genrend.c`, `v1model.c`, `mapping.c`, `softrend_asm_c.c` (`subdivideCheck`, `averageVertices`)
+  - ASM sources (`*.asm`) excluded from CMake build
 
 ---
 
@@ -193,6 +203,8 @@ drivers/pentprim/pentprim_util_c.c
 tests/CMakeLists.txt
 tests/br_begin_test.c
 tests/br_softrend_test.c
+tests/br_softrend_geometry_test.c
+tests/br_softrend_render_test.c   # WIP, disabled in CTest
 tests/br_pentprim_rast_test.c
 BUILDING.md
 ```
@@ -201,12 +213,8 @@ BUILDING.md
 
 ## Suggested next tasks (pick up here)
 
-1. **Merge PR #2** once reviewed — brings pentprim + tests to `main`.
-2. **End-to-end offscreen render test** (`tests/br_softrend_render_test.c`):
-   - `BrBegin()` → register both drivers → `BrRendererFacilityFind` → create renderer
-   - Allocate offscreen `br_pixelmap` (indexed 8 or RGB)
-   - Submit a single triangle primitive; read back non-zero pixels
-   - Link: `brender_core softrend pentprim`
+1. **Fix `br_softrend_render_test`** — raster path reaches face render without segfault; investigate zero pixels (onscreen face-op chain / projected coords / bucket-sort flush).
+2. **Merge PR #2** once reviewed — brings pentprim + tests to `main`.
 3. **Port one textured rasterizer** — start with a simple `TriangleRender_*PIZ2TI*` or similar from `prim_l8.c` tables; use existing ASM file as algorithm reference.
 4. **Trapezoid stubs** — add no-op `TrapezoidRender*` C stubs so `awtm.c`/`persp.c` can be added to the build, then replace with real C incrementally.
 5. **SDL2 display driver** (new `drivers/sdl/` or host-layer extension) — minimal window + blit.
@@ -228,6 +236,7 @@ Before ending a run, please:
 |------|--------|-----|-------------|-------|-------|
 | 2026-07-01 | `cursor/cmake-c-only-phase0-2eed` | #1 | Phase 0 core CMake | `br_begin_test` pass | Merged to `main` |
 | 2026-07-01 | `cursor/softrend-test-pentprim-2eed` | #2 | softrend fixes, pentprim Phase 1, 3 tests | all 3 pass | Rebased on `main` after #1 merge |
+| 2026-07-01 | (local) | — | Phase 1 render path: LP64 matrix copy, geometry test, render WIP | 4 pass, render disabled | `tokenval.c` copy fix; `v1model.c` chain order; render test still `pixels=0` |
 
 ---
 

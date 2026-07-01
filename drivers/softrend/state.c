@@ -361,6 +361,29 @@ br_error StateInitialise(struct state_all *state)
 	state->bounds = partBoundsDefault;
 	state->cull = partCullDefault;
 
+	/*
+	 * Bump part timestamps so StateCopy() will propagate defaults into
+	 * freshly zeroed renderer state (dest timestamps are all 0).
+	 */
+	state->cull.timestamp = Timestamp();
+	state->surface.timestamp = Timestamp();
+	state->surface.timestamp_transform = Timestamp();
+	state->matrix.timestamp = Timestamp();
+	state->matrix.timestamp_v2s_hint = Timestamp();
+	state->matrix.timestamp_m2v = Timestamp();
+	state->matrix.timestamp_v2s = Timestamp();
+	state->matrix.timestamp_v2e = Timestamp();
+	state->enable.timestamp = Timestamp();
+	state->hidden.timestamp = Timestamp();
+	state->bounds.timestamp = Timestamp();
+	state->timestamp_lights = Timestamp();
+	state->timestamp_clips = Timestamp();
+	state->timestamp_copy_cache = Timestamp();
+	state->timestamp_cache = Timestamp();
+
+	for (i = 0; i < MAX_STATE_LIGHTS; i++)
+		state->light[i].timestamp = Timestamp();
+
 	return BRE_OK;
 }
 
