@@ -379,7 +379,7 @@ void BR_ASM_CALL OpHeapAddTriangleConvert(struct brp_block *block, brp_vertex *v
 /*
  * Platform dependant downcoded geometry support
  */
-#ifdef __386__
+#if defined(__386__) && defined(BRENDER_USE_ASM) && BRENDER_USE_ASM
 #include "v1m_386.h"
 #include "gen_386.h"
 #endif

@@ -12,6 +12,13 @@
 
 BR_RCS_ID("$Id: brbegin.c 1.1 1997/12/10 16:41:03 jon Exp $")
 
+/*
+ * v1db_p.h redefines BrBegin/BrEnd to the database wrappers; undo that here
+ * so this translation unit exports the framework entry points.
+ */
+#undef BrBegin
+#undef BrEnd
+
 static br_boolean active = BR_FALSE;
 
 

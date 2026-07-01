@@ -83,6 +83,9 @@ static host_info hostInfo = {
 #elif defined(__WIN_32__)
 	"Microsoft WIN32",
 	0,
+#elif defined(__BR_POSIX__)
+	"POSIX Host",
+	HOST_CAPS_FPU,
 #else
 	"Unknown",
 	0,

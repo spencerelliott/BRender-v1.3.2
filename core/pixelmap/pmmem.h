@@ -12,6 +12,7 @@
 /*
  * Private state of memory pixelmap
  */
+#if !defined(_DEV_OBJS_H_) || defined(BR_DEVICE_PIXELMAP_PRIVATE)
 typedef struct br_device_pixelmap {
 	/*
 	 * Dispatch table
@@ -26,6 +27,7 @@ typedef struct br_device_pixelmap {
 	BR_PIXELMAP_MEMBERS
 
 } br_device_pixelmap;
+#endif
 
 
 /*
