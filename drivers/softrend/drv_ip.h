@@ -38,21 +38,6 @@ extern const br_token RendererPartsTokens[];
 
 br_renderer * RendererSoftAllocate(br_device *dev, struct br_renderer_facility *type, struct br_primitive_library *prims);
 
-br_error BR_CMETHOD_DECL(br_renderer_soft,commandModeSet)
-	(struct br_renderer *self, br_token mode);
-br_error BR_CMETHOD_DECL(br_renderer_soft,commandModeQuery)
-	(struct br_renderer *self, br_token *mode);
-br_error BR_CMETHOD_DECL(br_renderer_soft,commandModeDefault)
-	(struct br_renderer *self);
-br_error BR_CMETHOD_DECL(br_renderer_soft,commandModePush)
-	(struct br_renderer *self);
-br_error BR_CMETHOD_DECL(br_renderer_soft,commandModePop)
-	(struct br_renderer *self);
-br_error BR_CMETHOD_DECL(br_renderer_soft, flush)
-	(struct br_renderer *self, br_boolean wait);
-br_error BR_CMETHOD_DECL(br_renderer_soft, synchronise)
-	(struct br_renderer *self, br_token sync_type, br_boolean block);
-
 /*
  * rendstat.c
  */
@@ -379,7 +364,7 @@ void BR_ASM_CALL OpHeapAddTriangleConvert(struct brp_block *block, brp_vertex *v
 /*
  * Platform dependant downcoded geometry support
  */
-#ifdef __386__
+#if defined(__386__) && defined(BRENDER_USE_ASM) && BRENDER_USE_ASM
 #include "v1m_386.h"
 #include "gen_386.h"
 #endif

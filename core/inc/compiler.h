@@ -24,7 +24,12 @@ typedef unsigned char br_uint_8;
 /*
  * Generic size type (in case target environment does not have size_t)
  */
+#if defined(__BR_POSIX__)
+#include <stddef.h>
+typedef size_t br_size_t;
+#else
 typedef unsigned int br_size_t;
+#endif
 
 /*
  * Boolean type
@@ -250,6 +255,14 @@ typedef float br_float;
 
 #define BR_ENDIAN_BIG		0
 #define BR_ENDIAN_LITTLE	1
+
+#include <strings.h>
+#define stricmp strcasecmp
+#define strnicmp strncasecmp
+
+#ifndef __H2INC__
+#pragma pack(4)
+#endif
 
 /*
  * IBM CSet++

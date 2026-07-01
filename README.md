@@ -2,7 +2,24 @@
 
 This is the source code to version 1.3.2 of the BRender engine by Argonaut Software/Argonaut Games, from approximately 1998/11/17.
 
-This is intended as a basic release to let others build on, and more info on how to build and use this code will be added later.
+See **[BUILDING.md](BUILDING.md)** for CMake build instructions on modern Linux/macOS/POSIX systems.
+
+## CMake port (work in progress)
+
+A portable **C-only** build path is being added alongside the original DMAKE project files:
+
+- Core libraries (`brfw`, `brhost`, `brst`, `brpm`, `brmt`, `brdb`, `brfm`) build with CMake 3.20+.
+- The **software renderer** driver (`softrend`) builds with C geometry helpers; legacy x86 ASM is off by default.
+- A smoke test (`br_begin_test`) verifies `BrBegin()` / `BrEnd()` initialization.
+- **Not yet available:** POSIX display output, `pentprim` C rasterizers, and fixed-point CMake builds.
+
+```bash
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build
+ctest --test-dir build
+```
+
+The original DOS/Windows DMAKE build remains in the tree for reference.
 
 See also [the release of a 1997 version of the BRender engine](https://github.com/foone/BRender-1997).
 

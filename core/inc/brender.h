@@ -130,14 +130,8 @@
 #include "brlists.h" 
 
 	/*
-	 * Function prototypes
+	 * Function prototypes are included after device object definitions below.
 	 */
-#ifndef _NO_PROTOTYPES
-
-#ifndef _FW_P_H_
-#include "fw_p.h"
-#endif
-
 
 #ifndef _MATH_P_H_
 #include "math_p.h"
@@ -150,10 +144,6 @@
 
 #ifndef _SYSCON_P_H_
 #include "syscn_p.h"
-#endif
-
-
-
 #endif
 
 /**
@@ -177,6 +167,16 @@
 
 #include "assoca_p.h"
 
+#ifndef _NO_PROTOTYPES
+
+#ifndef _DEV_OBJS_H_
+#include "dev_objs.cgh"
+#endif
+
+#ifndef _FW_P_H_
+#include "fw_p.h"
+#endif
 
 #endif
+
 

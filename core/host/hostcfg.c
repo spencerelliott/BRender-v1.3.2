@@ -15,6 +15,8 @@
 
 #ifdef __WIN_32__
 #define DEFAULT_DEVICE "DDRAW"
+#elif defined(__BR_POSIX__)
+#define DEFAULT_DEVICE "SOFT"
 #else
 #define DEFAULT_DEVICE "MCGA"
 #endif
